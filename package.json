@@ -7,6 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db-view": "prisma studio",
+    "db-push": "prisma db push",
+    "db-start": "pscale connect book-town-school-project dev --port 3000",
     "storybook": "start-storybook",
     "build-storybook": "build-storybook",
     "export": "next build && next export",
@@ -44,5 +47,8 @@
   },
   "resolutions": {
     "webpack": "^5"
+  },
+  "prisma": {
+    "schema": "src/server/prisma/schema.prisma"
   }
 }
