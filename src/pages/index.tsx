@@ -1,39 +1,49 @@
 import * as React from 'react';
 import type { NextPage } from 'next';
 import { Table, TableHeader, TableRow, TableCell, TableBody, TableFooter } from '@cebus/react-components';
+import { dehydrate } from 'react-query/hydration';
+import { useQuery } from 'react-query';
+import { fetchBooks } from '../server';
+import { queryClient } from '../clients/react-query';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
-const Home: NextPage = () => {
+const Home: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
+  const { data } = useQuery('books', fetchBooks);
+
   return (
     <>
       <Table label="Basic table example">
         <TableHeader>
           <TableRow>
-            <TableCell>Product Name</TableCell>
-            <TableCell>Price</TableCell>
-            <TableCell>Quantity</TableCell>
+            <TableCell>Title</TableCell>
+            <TableCell>Author</TableCell>
+            <TableCell>Genre</TableCell>
+            <TableCell>Stock</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>T shirt</TableCell>
-            <TableCell>$20.00</TableCell>
-            <TableCell>3</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Jeans</TableCell>
-            <TableCell>$30.00</TableCell>
-            <TableCell>2</TableCell>
-          </TableRow>
+          {data?.map((book: any) => (
+            <TableRow>
+              <TableCell>{book.title}</TableCell>
+              <TableCell>{book.author}</TableCell>
+              <TableCell>{book.genre}</TableCell>
+              <TableCell>{book.stock}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell>Total</TableCell>
-            <TableCell>$120.00</TableCell>
-          </TableRow>
-        </TableFooter>
       </Table>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  await queryClient.prefetchQuery('books', fetchBooks);
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
 };
 
 export default Home;
