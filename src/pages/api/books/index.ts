@@ -31,6 +31,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         return res.status(422).json(error);
       }
+    case 'UPDATE':
+      try {
+        const { body } = req;
+        const books = await prisma.books.update({
+          where: JSON.parse(body).where,
+          data: JSON.parse(body).data,
+        });
+
+        return res.status(200).json(books);
+      } catch (error) {
+        return res.status(422).json(error);
+      }
   }
 
   res.end();

@@ -6,6 +6,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Body,
   Button,
   Input,
   Stack,
@@ -14,17 +15,18 @@ import {
 import type { InputProps } from '@cebus/react-components';
 import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
-import { fetchBooks, saveBook, deleteBook } from '../server';
+import { fetchBooks, createBook, deleteBook, updateBook } from '../server';
 import { queryClient } from '../clients/react-query';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const inputStyles = {
   height: '34px',
+  width: '100%',
   margin: '-15px',
   border: '0px',
   padding: '15px',
+  color: tokens.textColor,
   backgroundColor: tokens.canvasColor,
-  color: tokens.inherit,
 };
 
 const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
@@ -43,7 +45,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
 
   const { data } = useQuery('books', fetchBooks);
 
-  const save = useMutation(saveBook, {
+  const postItem = useMutation(createBook, {
     onError: async () => {
       setIsError(true);
     },
@@ -53,13 +55,19 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     },
   });
 
-  const removeItem = useMutation(deleteBook, {
+  const deleteItem = useMutation(deleteBook, {
     onSuccess: async () => {
       await queryClient.invalidateQueries('books');
     },
   });
 
-  const handleSubmit = () => {
+  const updateItem = useMutation(updateBook, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('books');
+    },
+  });
+
+  const onPost = () => {
     const incomingData = {
       title: title,
       author: author,
@@ -68,16 +76,61 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
       price: parseInt(price),
     };
 
-    save.mutate(incomingData);
+    postItem.mutate(incomingData);
+  };
+
+  const onUpdate = (props: any) => {
+    updateItem.mutate(props);
   };
 
   const onDelete = (itemToRemove: number) => {
-    removeItem.mutate({ id: itemToRemove });
+    deleteItem.mutate({ id: itemToRemove });
   };
+
+  const DataRow = (props: any) => {
+    const { id, author, genre, price, stock, title } = props;
+
+    const [inputTitle, setInputTitle] = React.useState(title);
+
+    const onInputTitleChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputTitle(ev.target.value);
+
+    return (
+      <TableRow key={id}>
+        <TableCell>{id}</TableCell>
+        <TableCell>
+          <input id={id + '-title'} value={inputTitle} onChange={onInputTitleChange} style={inputStyles} />
+        </TableCell>
+        <TableCell>{author}</TableCell>
+        <TableCell>{genre}</TableCell>
+        <TableCell>{price}</TableCell>
+        <TableCell>{stock}</TableCell>
+        <TableCell>
+          <Button
+            appearance="transparent"
+            color="brand"
+            shape="circle"
+            onClick={() => onUpdate({ where: id, data: { inputTitle, author, genre, price, stock } })}
+          >
+            Save
+          </Button>
+        </TableCell>
+        <TableCell>
+          <Button appearance="subtle" color="danger" shape="circle" onClick={() => onDelete(id)}>
+            X
+          </Button>
+        </TableCell>
+      </TableRow>
+    );
+  };
+
+  const TableItems = data?.map((item: any) => {
+    return <DataRow {...item} />;
+  });
 
   return (
     <>
       <Header1>Books</Header1>
+      <Body>Type in a table cell and press save to update an item.</Body>
       <Stack verticalAlignment="center">
         <Input
           value={title}
@@ -121,7 +174,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           style={{ maxWidth: '150px' }}
           danger={isError}
         />
-        <Button appearance="primary" onClick={handleSubmit}>
+        <Button appearance="primary" onClick={onPost}>
           Add record
         </Button>
       </Stack>
@@ -134,26 +187,11 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
             <TableCell>Genre</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Stock</TableCell>
+            <TableCell>Save</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {data?.map((book: any) => (
-            <TableRow>
-              <TableCell>{book.id}</TableCell>
-              <TableCell>{book.title}</TableCell>
-              <TableCell>{book.author}</TableCell>
-              <TableCell>{book.genre}</TableCell>
-              <TableCell>{book.price}</TableCell>
-              <TableCell>{book.stock}</TableCell>
-              <TableCell>
-                <Button appearance="subtle" color="danger" shape="circle" onClick={() => onDelete(book.id)}>
-                  X
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        <TableBody>{TableItems}</TableBody>
       </Table>
     </>
   );
