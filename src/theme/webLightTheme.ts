@@ -5,7 +5,7 @@ export const webLightTokens: ColorTokens = themeGenerator({
   canvasColor: '#ffffff',
   semanticColors: {
     inherit: '#444444',
-    brand: '#0297E3',
+    brand: '#4A973E',
     secondary: '#CF4646',
     success: '#278536',
     danger: '#de3309',

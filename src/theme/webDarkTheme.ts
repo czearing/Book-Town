@@ -5,7 +5,7 @@ export const webDarkTokens: ColorTokens = themeGenerator({
   canvasColor: '#202020',
   semanticColors: {
     inherit: '#908D8D',
-    brand: '#2165da',
+    brand: '#4A973E',
     secondary: '#d18300',
     success: '#278536',
     danger: '#de3309',

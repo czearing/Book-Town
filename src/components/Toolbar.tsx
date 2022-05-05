@@ -47,9 +47,11 @@ export const Toolbar = () => {
       <Stack wrap={false} verticalAlignment="center">
         <Link href="/" passHref>
           <a style={{ textDecoration: 'none' }}>
-            <Text color="brand" size={500} weight="bold" nowrap>
-              Book Town
-            </Text>
+            <Stack verticalAlignment="center" wrap={false}>
+              <Text color="brand" size={500} weight="bold" nowrap>
+                Book Town
+              </Text>
+            </Stack>
           </a>
         </Link>
       </Stack>
