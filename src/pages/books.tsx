@@ -14,7 +14,6 @@ import {
 import type { InputProps } from '@cebus/react-components';
 import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
-
 import { fetchBooks, saveBook, deleteBook } from '../server';
 import { queryClient } from '../clients/react-query';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
@@ -72,8 +71,8 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     save.mutate(incomingData);
   };
 
-  const onDelete = () => {
-    removeItem.mutate(1);
+  const onDelete = (itemToRemove: number) => {
+    removeItem.mutate({ id: itemToRemove });
   };
 
   return (
@@ -126,7 +125,6 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           Add record
         </Button>
       </Stack>
-
       <Table label="Basic table example">
         <TableHeader>
           <TableRow>
@@ -149,7 +147,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
               <TableCell>{book.price}</TableCell>
               <TableCell>{book.stock}</TableCell>
               <TableCell>
-                <Button appearance="subtle" color="danger" shape="circle" onClick={onDelete}>
+                <Button appearance="subtle" color="danger" shape="circle" onClick={() => onDelete(book.id)}>
                   X
                 </Button>
               </TableCell>

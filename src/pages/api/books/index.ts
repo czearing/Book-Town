@@ -24,9 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       try {
         const { body } = req;
         const books = await prisma.books.delete({
-          where: {
-            id: body,
-          },
+          where: JSON.parse(body),
         });
 
         return res.status(200).json(books);
