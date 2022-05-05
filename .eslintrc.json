@@ -1,0 +1,4 @@
+{
+  "extends": ["plugin:@cebus/eslint-plugin/react", "plugin:@next/next/recommended"],
+  "root": true
+}
