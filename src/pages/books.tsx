@@ -9,14 +9,13 @@ import {
   Button,
   Input,
   Stack,
-  Divider,
   tokens,
 } from '@cebus/react-components';
 import type { InputProps } from '@cebus/react-components';
 import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
 
-import { fetchBooks, saveBook } from '../server';
+import { fetchBooks, saveBook, deleteBook } from '../server';
 import { queryClient } from '../clients/react-query';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
@@ -35,6 +34,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   const [genre, setGenre] = React.useState('');
   const [stock, setStock] = React.useState('');
   const [price, setPrice] = React.useState('');
+  const [isError, setIsError] = React.useState(false);
 
   const onTitleChange: InputProps['onChange'] = (ev, incomingValue) => setTitle(incomingValue.value);
   const onAuthorChange: InputProps['onChange'] = (ev, incomingValue) => setAuthor(incomingValue.value);
@@ -43,10 +43,20 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   const onPriceChange: InputProps['onChange'] = (ev, incomingValue) => setPrice(incomingValue.value);
 
   const { data } = useQuery('books', fetchBooks);
-  const mutation = useMutation(saveBook, {
+
+  const save = useMutation(saveBook, {
+    onError: async () => {
+      setIsError(true);
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries('books');
-      data();
+      setIsError(false);
+    },
+  });
+
+  const removeItem = useMutation(deleteBook, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries('books');
     },
   });
 
@@ -59,16 +69,41 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
       price: parseInt(price),
     };
 
-    mutation.mutate(incomingData);
+    save.mutate(incomingData);
+  };
+
+  const onDelete = () => {
+    removeItem.mutate(1);
   };
 
   return (
     <>
       <Header1>Books</Header1>
       <Stack verticalAlignment="center">
-        <Input value={title} onChange={onTitleChange} label="Title" size="small" style={{ maxWidth: '150px' }} />
-        <Input value={author} onChange={onAuthorChange} label="Author" size="small" style={{ maxWidth: '150px' }} />
-        <Input value={genre} onChange={onGenreChange} label="Genre" size="small" style={{ maxWidth: '150px' }} />
+        <Input
+          value={title}
+          onChange={onTitleChange}
+          label="Title"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Input
+          value={author}
+          onChange={onAuthorChange}
+          label="Author"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Input
+          value={genre}
+          onChange={onGenreChange}
+          label="Genre"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
         <Input
           value={stock}
           onChange={onStockChange}
@@ -76,6 +111,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           size="small"
           type="number"
           style={{ maxWidth: '150px' }}
+          danger={isError}
         />
         <Input
           value={price}
@@ -84,6 +120,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           type="number"
           size="small"
           style={{ maxWidth: '150px' }}
+          danger={isError}
         />
         <Button appearance="primary" onClick={handleSubmit}>
           Add record
@@ -99,6 +136,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
             <TableCell>Genre</TableCell>
             <TableCell>Price</TableCell>
             <TableCell>Stock</TableCell>
+            <TableCell>Delete</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -110,6 +148,11 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
               <TableCell>{book.genre}</TableCell>
               <TableCell>{book.price}</TableCell>
               <TableCell>{book.stock}</TableCell>
+              <TableCell>
+                <Button appearance="subtle" color="danger" shape="circle" onClick={onDelete}>
+                  X
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
