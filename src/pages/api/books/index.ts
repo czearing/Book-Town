@@ -16,7 +16,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'GET':
       try {
         // const { body } = req;
-        const books = await prisma.books.findMany({ where: { title: 'Hello' } });
+
+        const books = await prisma.books.findMany({
+          // where: JSON.parse(body),
+        });
 
         return res.status(200).json(books);
       } catch (error) {

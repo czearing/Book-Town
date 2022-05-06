@@ -34,7 +34,7 @@ const inputStyles = {
 
 const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   const [searchValue, setSearchValue] = React.useState('');
-  const { data } = useQuery(['books', searchValue], () => fetchBooks({ id: 134 }));
+  const { data, isLoading } = useQuery(['books', searchValue], fetchBooks);
 
   const [isError, setIsError] = React.useState(false);
 
@@ -220,7 +220,8 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
         onChange={onSearchValueChange}
         contentAfter={<SearchIcon />}
         placeholder="Enter your search value"
-        label="Search"
+        label="Search (Work in progress)"
+        disabled
       />
       <Divider />
       <Header3>Add a Record</Header3>
@@ -229,33 +230,37 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
       <Divider />
       <Header3>Table</Header3>
       <Body>To edit a cell, update its input field and then press save.</Body>
-      <Table label="Basic table example">
-        <TableHeader>
-          <TableRow>
-            <TableCell>Id</TableCell>
-            <TableCell>Title</TableCell>
-            <TableCell>Author</TableCell>
-            <TableCell>Genre</TableCell>
-            <TableCell>Price</TableCell>
-            <TableCell>Stock</TableCell>
-            <TableCell>Save</TableCell>
-            <TableCell>Delete</TableCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>{TableItems}</TableBody>
-      </Table>
+      {!isLoading ? (
+        <Table label="Basic table example">
+          <TableHeader>
+            <TableRow>
+              <TableCell>Id</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Author</TableCell>
+              <TableCell>Genre</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Stock</TableCell>
+              <TableCell>Save</TableCell>
+              <TableCell>Delete</TableCell>
+            </TableRow>
+          </TableHeader>
+          <TableBody>{TableItems}</TableBody>
+        </Table>
+      ) : (
+        <Body>Loading...</Body>
+      )}
     </>
   );
 };
 
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   await queryClient.prefetchQuery('books', fetchBooks);
+export const getServerSideProps: GetServerSideProps = async () => {
+  await queryClient.prefetchQuery('books', fetchBooks);
 
-//   return {
-//     props: {
-//       dehydratedState: dehydrate(queryClient),
-//     },
-//   };
-// };
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
 
 export default Books;
