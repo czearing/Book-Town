@@ -67,8 +67,6 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     deleteItem.mutate({ id: itemToRemove });
   };
 
-  const onSearchValueChange: InputProps['onChange'] = (ev, incomingValue) => setSearchValue(incomingValue.value);
-
   const AddRecord = () => {
     const [title, setTitle] = React.useState('');
     const [author, setAuthor] = React.useState('');
