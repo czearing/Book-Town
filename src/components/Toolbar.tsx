@@ -59,16 +59,16 @@ export const Toolbar = () => {
       <Link href="books" passHref>
         <ToolbarButton as="a">Books</ToolbarButton>
       </Link>
-      <Link href="books" passHref>
+      <Link href="user" passHref>
         <ToolbarButton as="a">User</ToolbarButton>
       </Link>
-      <Link href="books" passHref>
+      <Link href="user-items" passHref>
         <ToolbarButton as="a">UserItems</ToolbarButton>
       </Link>
-      <Link href="books" passHref>
+      <Link href="orders" passHref>
         <ToolbarButton as="a">Orders</ToolbarButton>
       </Link>
-      <Link href="books" passHref>
+      <Link href="warehouses" passHref>
         <ToolbarButton as="a">Warehouses</ToolbarButton>
       </Link>
 

@@ -12,13 +12,12 @@ import {
   Header3,
   Stack,
   Divider,
-  SearchIcon,
   tokens,
 } from '@cebus/react-components';
 import type { InputProps } from '@cebus/react-components';
 import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
-import { fetchBooks, createBook, deleteBook, updateBook } from '../server';
+import { fetchBooks, createBook, deleteBook, updateBook, fetchUser } from '../server';
 import { queryClient } from '../clients/react-query';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
@@ -32,7 +31,7 @@ const inputStyles = {
   backgroundColor: tokens.canvasColor,
 };
 
-const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
+const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   const [searchValue, setSearchValue] = React.useState('');
   const { data, isLoading } = useQuery(['books', searchValue], fetchBooks);
 
@@ -211,18 +210,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
 
   return (
     <>
-      <Header1>Books</Header1>
-      <Divider />
-      <Header3>Search Titles</Header3>
-      <Body>Type in the input field below to search for an item.</Body>
-      <Input
-        value={searchValue}
-        onChange={onSearchValueChange}
-        contentAfter={<SearchIcon />}
-        placeholder="Enter your search value"
-        label="Search (Work in progress)"
-        disabled
-      />
+      <Header1>User</Header1>
       <Divider />
       <Header3>Add a Record</Header3>
       <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
@@ -254,7 +242,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  await queryClient.prefetchQuery('books', fetchBooks);
+  await queryClient.prefetchQuery('user', fetchUser);
 
   return {
     props: {
@@ -263,4 +251,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default Books;
+export default User;
