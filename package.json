@@ -14,7 +14,7 @@
     "build-storybook": "build-storybook",
     "export": "next build && next export",
     "chromatic": "chromatic",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && prisma migrate deploy && next build"
   },
   "dependencies": {
     "@fluentui/react-window-provider": "^2.2.0",
@@ -48,8 +48,5 @@
   },
   "resolutions": {
     "webpack": "^5"
-  },
-  "prisma": {
-    "schema": "src/server/prisma/schema.prisma"
   }
 }
