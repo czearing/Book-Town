@@ -33,7 +33,9 @@ const inputStyles = {
 };
 
 const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
-  const { data } = useQuery('books', fetchBooks);
+  const [searchValue, setSearchValue] = React.useState('');
+  const { data } = useQuery(['books', searchValue], () => fetchBooks({ id: 134 }));
+
   const [isError, setIsError] = React.useState(false);
 
   const postItem = useMutation(createBook, {
@@ -65,6 +67,8 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   const onDelete = (itemToRemove: number) => {
     deleteItem.mutate({ id: itemToRemove });
   };
+
+  const onSearchValueChange: InputProps['onChange'] = (ev, incomingValue) => setSearchValue(incomingValue.value);
 
   const AddRecord = () => {
     const [title, setTitle] = React.useState('');
@@ -209,9 +213,15 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     <>
       <Header1>Books</Header1>
       <Divider />
-      <Header3>Search Content</Header3>
+      <Header3>Search Titles</Header3>
       <Body>Type in the input field below to search for an item.</Body>
-      <Input contentAfter={<SearchIcon />} placeholder="Enter your search value" label="Search" />
+      <Input
+        value={searchValue}
+        onChange={onSearchValueChange}
+        contentAfter={<SearchIcon />}
+        placeholder="Enter your search value"
+        label="Search"
+      />
       <Divider />
       <Header3>Add a Record</Header3>
       <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
@@ -238,14 +248,14 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  await queryClient.prefetchQuery('books', fetchBooks);
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   await queryClient.prefetchQuery('books', fetchBooks);
 
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
+//   return {
+//     props: {
+//       dehydratedState: dehydrate(queryClient),
+//     },
+//   };
+// };
 
 export default Books;
