@@ -21,7 +21,7 @@ import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const inputStyles = {
   height: '34px',
-  width: '100%',
+  width: 'calc(100%-1px)',
   margin: '-15px',
   border: '0px',
   padding: '15px',
@@ -91,26 +91,49 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     const { id, author, genre, price, stock, title } = props;
 
     const [inputTitle, setInputTitle] = React.useState(title);
+    const [inputAuthor, setInputAuthor] = React.useState(author);
+    const [inputGenre, setInputGenre] = React.useState(genre);
+    const [inputPrice, setInputPrice] = React.useState(price);
+    const [inputStock, setInputStock] = React.useState(stock);
 
     const onInputTitleChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputTitle(ev.target.value);
+    const onInputAuthorChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputAuthor(ev.target.value);
+    const onInputGenreChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputGenre(ev.target.value);
+    const onInputPriceChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputPrice(ev.target.value);
+    const onInputStockChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputStock(ev.target.value);
+
+    const onUpdateClick = () =>
+      onUpdate({
+        where: { id: id },
+        data: {
+          title: inputTitle,
+          author: inputAuthor,
+          genre: inputGenre,
+          price: parseInt(inputPrice),
+          stock: parseInt(inputStock),
+        },
+      });
 
     return (
       <TableRow key={id}>
         <TableCell>{id}</TableCell>
         <TableCell>
-          <input id={id + '-title'} value={inputTitle} onChange={onInputTitleChange} style={inputStyles} />
+          <input value={inputTitle} onChange={onInputTitleChange} style={inputStyles} />
         </TableCell>
-        <TableCell>{author}</TableCell>
-        <TableCell>{genre}</TableCell>
-        <TableCell>{price}</TableCell>
-        <TableCell>{stock}</TableCell>
         <TableCell>
-          <Button
-            appearance="transparent"
-            color="brand"
-            shape="circle"
-            onClick={() => onUpdate({ where: id, data: { inputTitle, author, genre, price, stock } })}
-          >
+          <input value={inputAuthor} onChange={onInputAuthorChange} style={inputStyles} />
+        </TableCell>
+        <TableCell>
+          <input value={inputGenre} onChange={onInputGenreChange} style={inputStyles} />
+        </TableCell>
+        <TableCell>
+          <input value={inputPrice} onChange={onInputPriceChange} style={inputStyles} />
+        </TableCell>
+        <TableCell>
+          <input value={inputStock} onChange={onInputStockChange} style={inputStyles} />
+        </TableCell>
+        <TableCell>
+          <Button appearance="transparent" color="brand" shape="circle" onClick={onUpdateClick}>
             Save
           </Button>
         </TableCell>
@@ -130,7 +153,7 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   return (
     <>
       <Header1>Books</Header1>
-      <Body>Type in a table cell and press save to update an item.</Body>
+      <Body>Type in a table cell and press save to update a record.</Body>
       <Stack verticalAlignment="center">
         <Input
           value={title}

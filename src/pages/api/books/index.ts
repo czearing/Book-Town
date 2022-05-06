@@ -12,6 +12,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         return res.status(422).json(error);
       }
+
     case 'GET':
       try {
         const books = await prisma.books.findMany({});
@@ -20,6 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         return res.status(422).json(error);
       }
+
     case 'DELETE':
       try {
         const { body } = req;
@@ -31,7 +33,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } catch (error) {
         return res.status(422).json(error);
       }
-    case 'UPDATE':
+
+    case 'PATCH':
       try {
         const { body } = req;
         const books = await prisma.books.update({
