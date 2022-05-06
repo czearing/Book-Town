@@ -17,7 +17,7 @@ import {
 import type { InputProps } from '@cebus/react-components';
 import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
-import { createUser, deleteUser, fetchUser, updateUser } from '../server';
+import { createWarehouse, deleteWarehouse, fetchWarehouse, updateWarehouse } from '../server';
 import { queryClient } from '../clients/react-query';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
@@ -32,29 +32,29 @@ const inputStyles = {
 };
 
 const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
-  const { data, isLoading } = useQuery('user', fetchUser);
+  const { data, isLoading } = useQuery('warehouse', fetchWarehouse);
 
   const [isError, setIsError] = React.useState(false);
 
-  const postItem = useMutation(createUser, {
+  const postItem = useMutation(createWarehouse, {
     onError: async () => {
       setIsError(true);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries('user');
+      await queryClient.invalidateQueries('warehouse');
       setIsError(false);
     },
   });
 
-  const deleteItem = useMutation(deleteUser, {
+  const deleteItem = useMutation(deleteWarehouse, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries('user');
+      await queryClient.invalidateQueries('warehouse');
     },
   });
 
-  const updateItem = useMutation(updateUser, {
+  const updateItem = useMutation(updateWarehouse, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries('user');
+      await queryClient.invalidateQueries('warehouse');
     },
   });
 
@@ -67,25 +67,13 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
   };
 
   const AddRecord = () => {
-    const [firstName, setFirstName] = React.useState('');
-    const [lastName, setLastName] = React.useState('');
-    const [userName, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [email, setEmail] = React.useState('');
+    const [address, setAddress] = React.useState('');
 
-    const onFirstNameChange: InputProps['onChange'] = (ev, incomingValue) => setFirstName(incomingValue.value);
-    const onLastNameChange: InputProps['onChange'] = (ev, incomingValue) => setLastName(incomingValue.value);
-    const onUserNameChange: InputProps['onChange'] = (ev, incomingValue) => setUsername(incomingValue.value);
-    const onPasswordChange: InputProps['onChange'] = (ev, incomingValue) => setPassword(incomingValue.value);
-    const onEmailChange: InputProps['onChange'] = (ev, incomingValue) => setEmail(incomingValue.value);
+    const onAddressChange: InputProps['onChange'] = (ev, incomingValue) => setAddress(incomingValue.value);
 
     const onPost = () => {
       const incomingData = {
-        firstName: firstName,
-        lastName: lastName,
-        userName: userName,
-        password: password,
-        email: email,
+        address: address,
       };
 
       postItem.mutate(incomingData);
@@ -94,41 +82,9 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
     return (
       <Stack verticalAlignment="center">
         <Input
-          value={firstName}
-          onChange={onFirstNameChange}
-          label="First name"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={lastName}
-          onChange={onLastNameChange}
-          label="Last name"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={userName}
-          onChange={onUserNameChange}
-          label="Username"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={password}
-          onChange={onPasswordChange}
-          label="Password"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={email}
-          onChange={onEmailChange}
-          label="Email"
+          value={address}
+          onChange={onAddressChange}
+          label="Address"
           size="small"
           style={{ maxWidth: '150px' }}
           danger={isError}
@@ -141,27 +97,15 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
   };
 
   const DataRow = (props: any) => {
-    const [firstName, setFirstName] = React.useState(props.firstName);
-    const [lastName, setLastName] = React.useState(props.lastName);
-    const [userName, setUsername] = React.useState(props.userName);
-    const [password, setPassword] = React.useState(props.password);
-    const [email, setEmail] = React.useState(props.email);
+    const [address, setAddress] = React.useState(props.address);
 
-    const onFirstNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => setFirstName(ev.target.value);
-    const onLastNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => setLastName(ev.target.value);
-    const onUserNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => setUsername(ev.target.value);
-    const onPasswordChange = (ev: React.ChangeEvent<HTMLInputElement>) => setPassword(ev.target.value);
-    const onEmailChange = (ev: React.ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value);
+    const onAddressChange = (ev: React.ChangeEvent<HTMLInputElement>) => setAddress(ev.target.value);
 
     const onUpdateClick = () =>
       onUpdate({
         where: { id: props.id },
         data: {
-          firstName: firstName,
-          lastName: lastName,
-          userName: userName,
-          password: password,
-          email: email,
+          address: address,
         },
       });
 
@@ -169,19 +113,7 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
       <TableRow key={props.id}>
         <TableCell>{props.id}</TableCell>
         <TableCell>
-          <input value={firstName} onChange={onFirstNameChange} style={inputStyles} />
-        </TableCell>
-        <TableCell>
-          <input value={lastName} onChange={onLastNameChange} style={inputStyles} />
-        </TableCell>
-        <TableCell>
-          <input value={userName} onChange={onUserNameChange} style={inputStyles} />
-        </TableCell>
-        <TableCell>
-          <input value={email} onChange={onEmailChange} style={inputStyles} />
-        </TableCell>
-        <TableCell>
-          <input value={password} onChange={onPasswordChange} style={inputStyles} />
+          <input value={address} onChange={onAddressChange} style={inputStyles} />
         </TableCell>
         <TableCell>
           <Button appearance="transparent" color="brand" shape="circle" onClick={onUpdateClick}>
@@ -203,7 +135,7 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
 
   return (
     <>
-      <Header1>User</Header1>
+      <Header1>Warehouses</Header1>
       <Divider />
       <Header3>Add a Record</Header3>
       <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
@@ -216,11 +148,7 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
           <TableHeader>
             <TableRow>
               <TableCell>Id</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Author</TableCell>
-              <TableCell>Genre</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Stock</TableCell>
+              <TableCell>Address</TableCell>
               <TableCell>Save</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
@@ -235,7 +163,7 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
 };
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  await queryClient.prefetchQuery('user', fetchUser);
+  await queryClient.prefetchQuery('warehouse', fetchWarehouse);
 
   return {
     props: {

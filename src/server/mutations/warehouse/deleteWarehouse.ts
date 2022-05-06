@@ -1,5 +1,5 @@
 export const deleteWarehouse = async (body: any) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user-items`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/warehouse`, {
     method: 'DELETE',
     body: JSON.stringify(body),
   });
