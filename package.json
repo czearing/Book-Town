@@ -13,7 +13,8 @@
     "storybook": "start-storybook",
     "build-storybook": "build-storybook",
     "export": "next build && next export",
-    "chromatic": "chromatic"
+    "chromatic": "chromatic",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@fluentui/react-window-provider": "^2.2.0",
