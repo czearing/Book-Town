@@ -17,7 +17,7 @@ import {
 import type { InputProps } from '@cebus/react-components';
 import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
-import { fetchBooks, createBook, deleteBook, updateBook, fetchUser } from '../server';
+import { createUser, deleteUser, fetchUser, updateUser } from '../server';
 import { queryClient } from '../clients/react-query';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
@@ -32,29 +32,29 @@ const inputStyles = {
 };
 
 const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
-  const { data, isLoading } = useQuery('user', fetchBooks);
+  const { data, isLoading } = useQuery('user', fetchUser);
 
   const [isError, setIsError] = React.useState(false);
 
-  const postItem = useMutation(createBook, {
+  const postItem = useMutation(createUser, {
     onError: async () => {
       setIsError(true);
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries('books');
+      await queryClient.invalidateQueries('user');
       setIsError(false);
     },
   });
 
-  const deleteItem = useMutation(deleteBook, {
+  const deleteItem = useMutation(deleteUser, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries('books');
+      await queryClient.invalidateQueries('user');
     },
   });
 
-  const updateItem = useMutation(updateBook, {
+  const updateItem = useMutation(updateUser, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries('books');
+      await queryClient.invalidateQueries('user');
     },
   });
 
@@ -122,7 +122,6 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           onChange={onPasswordChange}
           label="Password"
           size="small"
-          type="number"
           style={{ maxWidth: '150px' }}
           danger={isError}
         />
@@ -130,7 +129,6 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           value={email}
           onChange={onEmailChange}
           label="Email"
-          type="number"
           size="small"
           style={{ maxWidth: '150px' }}
           danger={isError}
