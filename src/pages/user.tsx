@@ -232,16 +232,16 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
       )}
     </>
   );
-// };
+};
 
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   await queryClient.prefetchQuery('user', fetchUser);
+export const getServerSideProps: GetServerSideProps = async () => {
+  // await queryClient.prefetchQuery('user', fetchUser);
 
-//   return {
-//     props: {
-//       dehydratedState: dehydrate(queryClient),
-//     },
-//   };
-// };
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
 
 export default User;
