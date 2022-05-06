@@ -5,7 +5,7 @@ import type { NextPage } from 'next';
 const Home: NextPage = () => {
   return (
     <>
-      <Body>Hello world</Body>
+      <Body>Welcome to our demo app. Use the links in the taskbar to navigate.</Body>
     </>
   );
 };
