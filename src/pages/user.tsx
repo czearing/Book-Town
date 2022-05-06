@@ -143,49 +143,47 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   };
 
   const DataRow = (props: any) => {
-    const { id, author, genre, price, stock, title } = props;
+    const [firstName, setFirstName] = React.useState(props.firstName);
+    const [lastName, setLastName] = React.useState(props.lastName);
+    const [userName, setUsername] = React.useState(props.userName);
+    const [password, setPassword] = React.useState(props.password);
+    const [email, setEmail] = React.useState(props.email);
 
-    const [inputTitle, setInputTitle] = React.useState(title);
-    const [inputAuthor, setInputAuthor] = React.useState(author);
-    const [inputGenre, setInputGenre] = React.useState(genre);
-    const [inputPrice, setInputPrice] = React.useState(price);
-    const [inputStock, setInputStock] = React.useState(stock);
-
-    const onInputTitleChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputTitle(ev.target.value);
-    const onInputAuthorChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputAuthor(ev.target.value);
-    const onInputGenreChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputGenre(ev.target.value);
-    const onInputPriceChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputPrice(ev.target.value);
-    const onInputStockChange = (ev: React.ChangeEvent<HTMLInputElement>) => setInputStock(ev.target.value);
+    const onFirstNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => setFirstName(ev.target.value);
+    const onLastNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => setLastName(ev.target.value);
+    const onUserNameChange = (ev: React.ChangeEvent<HTMLInputElement>) => setUsername(ev.target.value);
+    const onPasswordChange = (ev: React.ChangeEvent<HTMLInputElement>) => setPassword(ev.target.value);
+    const onEmailChange = (ev: React.ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value);
 
     const onUpdateClick = () =>
       onUpdate({
-        where: { id: id },
+        where: { id: props.id },
         data: {
-          title: inputTitle,
-          author: inputAuthor,
-          genre: inputGenre,
-          price: parseInt(inputPrice),
-          stock: parseInt(inputStock),
+          firstName: firstName,
+          lastName: lastName,
+          userName: userName,
+          password: password,
+          email: email,
         },
       });
 
     return (
-      <TableRow key={id}>
-        <TableCell>{id}</TableCell>
+      <TableRow key={props.id}>
+        <TableCell>{props.id}</TableCell>
         <TableCell>
-          <input value={inputTitle} onChange={onInputTitleChange} style={inputStyles} />
+          <input value={firstName} onChange={onFirstNameChange} style={inputStyles} />
         </TableCell>
         <TableCell>
-          <input value={inputAuthor} onChange={onInputAuthorChange} style={inputStyles} />
+          <input value={lastName} onChange={onLastNameChange} style={inputStyles} />
         </TableCell>
         <TableCell>
-          <input value={inputGenre} onChange={onInputGenreChange} style={inputStyles} />
+          <input value={userName} onChange={onUserNameChange} style={inputStyles} />
         </TableCell>
         <TableCell>
-          <input value={inputPrice} onChange={onInputPriceChange} style={inputStyles} />
+          <input value={email} onChange={onEmailChange} style={inputStyles} />
         </TableCell>
         <TableCell>
-          <input value={inputStock} onChange={onInputStockChange} style={inputStyles} />
+          <input value={password} onChange={onPasswordChange} style={inputStyles} />
         </TableCell>
         <TableCell>
           <Button appearance="transparent" color="brand" shape="circle" onClick={onUpdateClick}>
@@ -193,7 +191,7 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
           </Button>
         </TableCell>
         <TableCell>
-          <Button appearance="subtle" color="danger" shape="circle" onClick={() => onDelete(id)}>
+          <Button appearance="subtle" color="danger" shape="circle" onClick={() => onDelete(props.id)}>
             X
           </Button>
         </TableCell>
