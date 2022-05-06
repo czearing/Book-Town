@@ -32,8 +32,7 @@ const inputStyles = {
 };
 
 const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
-  const [searchValue, setSearchValue] = React.useState('');
-  const { data, isLoading } = useQuery(['books', searchValue], fetchBooks);
+  const { data, isLoading } = useQuery('user', fetchBooks);
 
   const [isError, setIsError] = React.useState(false);
 
@@ -68,25 +67,25 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   };
 
   const AddRecord = () => {
-    const [title, setTitle] = React.useState('');
-    const [author, setAuthor] = React.useState('');
-    const [genre, setGenre] = React.useState('');
-    const [stock, setStock] = React.useState('');
-    const [price, setPrice] = React.useState('');
+    const [firstName, setFirstName] = React.useState('');
+    const [lastName, setLastName] = React.useState('');
+    const [userName, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [email, setEmail] = React.useState('');
 
-    const onTitleChange: InputProps['onChange'] = (ev, incomingValue) => setTitle(incomingValue.value);
-    const onAuthorChange: InputProps['onChange'] = (ev, incomingValue) => setAuthor(incomingValue.value);
-    const onGenreChange: InputProps['onChange'] = (ev, incomingValue) => setGenre(incomingValue.value);
-    const onStockChange: InputProps['onChange'] = (ev, incomingValue) => setStock(incomingValue.value);
-    const onPriceChange: InputProps['onChange'] = (ev, incomingValue) => setPrice(incomingValue.value);
+    const onFirstNameChange: InputProps['onChange'] = (ev, incomingValue) => setFirstName(incomingValue.value);
+    const onLastNameChange: InputProps['onChange'] = (ev, incomingValue) => setLastName(incomingValue.value);
+    const onUserNameChange: InputProps['onChange'] = (ev, incomingValue) => setUsername(incomingValue.value);
+    const onPasswordChange: InputProps['onChange'] = (ev, incomingValue) => setPassword(incomingValue.value);
+    const onEmailChange: InputProps['onChange'] = (ev, incomingValue) => setEmail(incomingValue.value);
 
     const onPost = () => {
       const incomingData = {
-        title: title,
-        author: author,
-        genre: genre,
-        stock: parseInt(stock),
-        price: parseInt(price),
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        password: password,
+        email: email,
       };
 
       postItem.mutate(incomingData);
@@ -95,42 +94,42 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     return (
       <Stack verticalAlignment="center">
         <Input
-          value={title}
-          onChange={onTitleChange}
-          label="Title"
+          value={firstName}
+          onChange={onFirstNameChange}
+          label="First name"
           size="small"
           style={{ maxWidth: '150px' }}
           danger={isError}
         />
         <Input
-          value={author}
-          onChange={onAuthorChange}
-          label="Author"
+          value={lastName}
+          onChange={onLastNameChange}
+          label="Last name"
           size="small"
           style={{ maxWidth: '150px' }}
           danger={isError}
         />
         <Input
-          value={genre}
-          onChange={onGenreChange}
-          label="Genre"
+          value={userName}
+          onChange={onUserNameChange}
+          label="Username"
           size="small"
           style={{ maxWidth: '150px' }}
           danger={isError}
         />
         <Input
-          value={stock}
-          onChange={onStockChange}
-          label="Stock"
+          value={password}
+          onChange={onPasswordChange}
+          label="Password"
           size="small"
           type="number"
           style={{ maxWidth: '150px' }}
           danger={isError}
         />
         <Input
-          value={price}
-          onChange={onPriceChange}
-          label="Price"
+          value={email}
+          onChange={onEmailChange}
+          label="Email"
           type="number"
           size="small"
           style={{ maxWidth: '150px' }}
