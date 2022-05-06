@@ -9,7 +9,10 @@ import {
   Body,
   Button,
   Input,
+  Header3,
   Stack,
+  Divider,
+  SearchIcon,
   tokens,
 } from '@cebus/react-components';
 import type { InputProps } from '@cebus/react-components';
@@ -30,20 +33,8 @@ const inputStyles = {
 };
 
 const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
-  const [title, setTitle] = React.useState('');
-  const [author, setAuthor] = React.useState('');
-  const [genre, setGenre] = React.useState('');
-  const [stock, setStock] = React.useState('');
-  const [price, setPrice] = React.useState('');
-  const [isError, setIsError] = React.useState(false);
-
-  const onTitleChange: InputProps['onChange'] = (ev, incomingValue) => setTitle(incomingValue.value);
-  const onAuthorChange: InputProps['onChange'] = (ev, incomingValue) => setAuthor(incomingValue.value);
-  const onGenreChange: InputProps['onChange'] = (ev, incomingValue) => setGenre(incomingValue.value);
-  const onStockChange: InputProps['onChange'] = (ev, incomingValue) => setStock(incomingValue.value);
-  const onPriceChange: InputProps['onChange'] = (ev, incomingValue) => setPrice(incomingValue.value);
-
   const { data } = useQuery('books', fetchBooks);
+  const [isError, setIsError] = React.useState(false);
 
   const postItem = useMutation(createBook, {
     onError: async () => {
@@ -67,24 +58,88 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     },
   });
 
-  const onPost = () => {
-    const incomingData = {
-      title: title,
-      author: author,
-      genre: genre,
-      stock: parseInt(stock),
-      price: parseInt(price),
-    };
-
-    postItem.mutate(incomingData);
-  };
-
   const onUpdate = (props: any) => {
     updateItem.mutate(props);
   };
 
   const onDelete = (itemToRemove: number) => {
     deleteItem.mutate({ id: itemToRemove });
+  };
+
+  const AddRecord = () => {
+    const [title, setTitle] = React.useState('');
+    const [author, setAuthor] = React.useState('');
+    const [genre, setGenre] = React.useState('');
+    const [stock, setStock] = React.useState('');
+    const [price, setPrice] = React.useState('');
+
+    const onTitleChange: InputProps['onChange'] = (ev, incomingValue) => setTitle(incomingValue.value);
+    const onAuthorChange: InputProps['onChange'] = (ev, incomingValue) => setAuthor(incomingValue.value);
+    const onGenreChange: InputProps['onChange'] = (ev, incomingValue) => setGenre(incomingValue.value);
+    const onStockChange: InputProps['onChange'] = (ev, incomingValue) => setStock(incomingValue.value);
+    const onPriceChange: InputProps['onChange'] = (ev, incomingValue) => setPrice(incomingValue.value);
+
+    const onPost = () => {
+      const incomingData = {
+        title: title,
+        author: author,
+        genre: genre,
+        stock: parseInt(stock),
+        price: parseInt(price),
+      };
+
+      postItem.mutate(incomingData);
+    };
+
+    return (
+      <Stack verticalAlignment="center">
+        <Input
+          value={title}
+          onChange={onTitleChange}
+          label="Title"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Input
+          value={author}
+          onChange={onAuthorChange}
+          label="Author"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Input
+          value={genre}
+          onChange={onGenreChange}
+          label="Genre"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Input
+          value={stock}
+          onChange={onStockChange}
+          label="Stock"
+          size="small"
+          type="number"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Input
+          value={price}
+          onChange={onPriceChange}
+          label="Price"
+          type="number"
+          size="small"
+          style={{ maxWidth: '150px' }}
+          danger={isError}
+        />
+        <Button appearance="primary" onClick={onPost}>
+          Add record
+        </Button>
+      </Stack>
+    );
   };
 
   const DataRow = (props: any) => {
@@ -153,54 +208,17 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   return (
     <>
       <Header1>Books</Header1>
-      <Body>Type in a table cell and press save to update a record.</Body>
-      <Stack verticalAlignment="center">
-        <Input
-          value={title}
-          onChange={onTitleChange}
-          label="Title"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={author}
-          onChange={onAuthorChange}
-          label="Author"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={genre}
-          onChange={onGenreChange}
-          label="Genre"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={stock}
-          onChange={onStockChange}
-          label="Stock"
-          size="small"
-          type="number"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={price}
-          onChange={onPriceChange}
-          label="Price"
-          type="number"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Button appearance="primary" onClick={onPost}>
-          Add record
-        </Button>
-      </Stack>
+      <Divider />
+      <Header3>Search Content</Header3>
+      <Body>Type in the input field below to search for an item.</Body>
+      <Input contentAfter={<SearchIcon />} placeholder="Enter your search value" label="Search" />
+      <Divider />
+      <Header3>Add a Record</Header3>
+      <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
+      <AddRecord />
+      <Divider />
+      <Header3>Table</Header3>
+      <Body>To edit a cell, update its input field and then press save.</Body>
       <Table label="Basic table example">
         <TableHeader>
           <TableRow>
