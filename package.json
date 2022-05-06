@@ -14,7 +14,7 @@
     "build-storybook": "build-storybook",
     "export": "next build && next export",
     "chromatic": "chromatic",
-    "postinstall": "prisma generate && prisma migrate deploy && next build"
+    "postinstall": "prisma generate  && next build"
   },
   "dependencies": {
     "@fluentui/react-window-provider": "^2.2.0",
