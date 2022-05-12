@@ -205,9 +205,11 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     );
   };
 
-  const TableItems = data?.map((item: any) => {
-    return <DataRow {...item} />;
-  });
+  const TableItems =
+    data?.length > 0 &&
+    data.map((item: any) => {
+      return <DataRow {...item} />;
+    });
 
   return (
     <>
