@@ -1,20 +1,8 @@
 import * as React from 'react';
-import {
-  Header1,
-  Table,
-  TableHeader,
-  TableRow,
-  TableCell,
-  TableBody,
-  Body,
-  Input,
-  Header3,
-  Divider,
-  SearchIcon,
-} from '@cebus/react-components';
+import { Header1, Body, Input, Header3, Divider, SearchIcon } from '@cebus/react-components';
 import type { InputProps } from '@cebus/react-components';
 import { useQuery, useMutation } from 'react-query';
-import { AddRecord, DataRow } from '../components';
+import { AddRecord, DataTable } from '../components';
 import type { Record } from '../components';
 import { fetchBooks, createBook, deleteBook, updateBook } from '../server';
 import { queryClient } from '../clients/react-query';
@@ -48,14 +36,6 @@ const Books: NextPage = () => {
     },
   });
 
-  const onUpdate = (props: any) => {
-    updateItem.mutate(props);
-  };
-
-  const onDelete = (itemToRemove: number) => {
-    deleteItem.mutate({ id: itemToRemove });
-  };
-
   const onSearchValueChange: InputProps['onChange'] = (ev, incomingValue) => setSearchValue(incomingValue.value);
 
   const records: Record[] = [
@@ -65,12 +45,6 @@ const Books: NextPage = () => {
     { name: 'Price', id: 'price', type: 'number' },
     { name: 'Stock', id: 'stock', type: 'number' },
   ];
-
-  const TableItems =
-    data?.length > 0 &&
-    data.map((item: any) => {
-      return <DataRow records={records} data={item} onUpdate={onUpdate} onDelete={onDelete} />;
-    });
 
   return (
     <>
@@ -89,21 +63,7 @@ const Books: NextPage = () => {
       <Divider />
       <AddRecord records={records} postItem={postItem} isError={isError} />
       <Divider />
-      <Header3>Table</Header3>
-      <Body>To edit a cell, update its input field and then press save.</Body>
-      <Table label="Basic table example">
-        <TableHeader>
-          <TableRow>
-            <TableCell>Id</TableCell>
-            {records.map(record => (
-              <TableCell>{record.name}</TableCell>
-            ))}
-            <TableCell>Save</TableCell>
-            <TableCell>Delete</TableCell>
-          </TableRow>
-        </TableHeader>
-        {!isLoading ? <TableBody>{TableItems}</TableBody> : <Body>Loading...</Body>}
-      </Table>
+      <DataTable records={records} data={data} isLoading={isLoading} updateItem={updateItem} deleteItem={deleteItem} />
     </>
   );
 };
