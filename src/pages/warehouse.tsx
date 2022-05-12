@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Header1, Body, Header3, Divider } from '@cebus/react-components';
+import { Header1, Divider } from '@cebus/react-components';
 import { AddRecord, DataTable } from '../components';
 import type { Record } from '../components';
 import { useQuery, useMutation } from 'react-query';

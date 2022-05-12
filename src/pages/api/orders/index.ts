@@ -6,18 +6,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'POST':
       try {
         const { body } = req;
-        const userItems = await prisma.userItems.create({ data: JSON.parse(body) });
+        const orders = await prisma.orders.create({ data: JSON.parse(body) });
 
-        return res.status(200).json(userItems);
+        return res.status(200).json(orders);
       } catch (error) {
         return res.status(422).json(error);
       }
 
     case 'GET':
       try {
-        const userItems = await prisma.userItems.findMany({});
+        const orders = await prisma.orders.findMany({});
 
-        return res.status(200).json(userItems);
+        return res.status(200).json(orders);
       } catch (error) {
         return res.status(422).json(error);
       }
@@ -25,11 +25,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'DELETE':
       try {
         const { body } = req;
-        const userItems = await prisma.userItems.delete({
+        const orders = await prisma.orders.delete({
           where: JSON.parse(body),
         });
 
-        return res.status(200).json(userItems);
+        return res.status(200).json(orders);
       } catch (error) {
         return res.status(422).json(error);
       }
@@ -37,12 +37,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     case 'PATCH':
       try {
         const { body } = req;
-        const user = await prisma.user.update({
+        const orders = await prisma.orders.update({
           where: JSON.parse(body).where,
           data: JSON.parse(body).data,
         });
 
-        return res.status(200).json(user);
+        return res.status(200).json(orders);
       } catch (error) {
         return res.status(422).json(error);
       }

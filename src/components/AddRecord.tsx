@@ -35,7 +35,7 @@ type AddRecordProps = {
   postItem: any;
 };
 
-const inputStyles = { maxWidth: '150px' };
+const inputStyles = { maxWidth: '150px', display: 'flex' };
 
 export const AddRecord = (props: AddRecordProps) => {
   const { records, isError, postItem } = props;
@@ -50,6 +50,7 @@ export const AddRecord = (props: AddRecordProps) => {
       }
     }
 
+    console.log(data);
     postItem.mutate(data);
   };
 
@@ -70,7 +71,6 @@ export const AddRecord = (props: AddRecordProps) => {
               danger={isError}
             />
           ))}
-
           <Button appearance="primary" type="submit">
             Add record
           </Button>

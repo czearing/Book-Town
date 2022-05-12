@@ -4,9 +4,10 @@ import type { Record } from './index';
 
 const inputStyles = {
   height: '34px',
+  width: '100%',
   margin: '-15px',
   border: '0px',
-  padding: '15px',
+  padding: '14px',
   color: tokens.textColor,
   backgroundColor: tokens.canvasColor,
   flexGrow: '1',
@@ -45,15 +46,14 @@ export const DataRow = (props: DataRowProps) => {
 
     const updatedData: any = {};
     for (const key in rowData) {
-      if (key !== 'id') {
-        // TODO: This is an evil exponential function. Change it so it does a constant look up.
-        for (let i = 0; i < records.length; i++) {
-          if (records[i].id === key) {
-            if (records[i].type === 'number') {
-              updatedData[key] = parseInt(rowData[key]);
-            } else {
-              updatedData[key] = rowData[key];
-            }
+      // if (key !== 'id') {
+      // TODO: This is an evil exponential function. Change it so it does a constant look up.
+      for (let i = 0; i < records.length; i++) {
+        if (records[i].id === key) {
+          if (records[i].type === 'number') {
+            updatedData[key] = parseInt(rowData[key]);
+          } else {
+            updatedData[key] = rowData[key];
           }
         }
       }
