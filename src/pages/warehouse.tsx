@@ -8,18 +8,16 @@ import {
   TableBody,
   Body,
   Button,
-  Input,
   Header3,
-  Stack,
   Divider,
   tokens,
 } from '@cebus/react-components';
-import type { InputProps } from '@cebus/react-components';
-import { dehydrate } from 'react-query/hydration';
+import { AddRecord } from '../components';
+import type { Record } from '../components';
 import { useQuery, useMutation } from 'react-query';
 import { createWarehouse, deleteWarehouse, fetchWarehouse, updateWarehouse } from '../server';
 import { queryClient } from '../clients/react-query';
-import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import type { NextPage } from 'next';
 
 const inputStyles = {
   height: '34px',
@@ -31,7 +29,7 @@ const inputStyles = {
   backgroundColor: tokens.canvasColor,
 };
 
-const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
+const Warehouse: NextPage = ({}) => {
   const { data, isLoading } = useQuery('warehouse', fetchWarehouse);
 
   const [isError, setIsError] = React.useState(false);
@@ -40,6 +38,7 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
     onError: async () => {
       setIsError(true);
     },
+
     onSuccess: async () => {
       await queryClient.invalidateQueries('warehouse');
       setIsError(false);
@@ -64,36 +63,6 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
 
   const onDelete = (itemToRemove: number) => {
     deleteItem.mutate({ id: itemToRemove });
-  };
-
-  const AddRecord = () => {
-    const [address, setAddress] = React.useState('');
-
-    const onAddressChange: InputProps['onChange'] = (ev, incomingValue) => setAddress(incomingValue.value);
-
-    const onPost = () => {
-      const incomingData = {
-        address: address,
-      };
-
-      postItem.mutate(incomingData);
-    };
-
-    return (
-      <Stack verticalAlignment="center">
-        <Input
-          value={address}
-          onChange={onAddressChange}
-          label="Address"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Button appearance="primary" onClick={onPost}>
-          Add record
-        </Button>
-      </Stack>
-    );
   };
 
   const DataRow = (props: any) => {
@@ -133,43 +102,30 @@ const Warehouse: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) =
     return <DataRow {...item} />;
   });
 
+  const records: Record[] = [{ name: 'Address', id: 'address', type: 'text' }];
+
   return (
     <>
       <Header1>Warehouses</Header1>
       <Divider />
-      <Header3>Add a Record</Header3>
-      <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
-      <AddRecord />
+      <AddRecord records={records} isError={isError} postItem={postItem} />
       <Divider />
       <Header3>Table</Header3>
       <Body>To edit a cell, update its input field and then press save.</Body>
-      {!isLoading ? (
-        <Table label="Basic table example">
-          <TableHeader>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Address</TableCell>
-              <TableCell>Save</TableCell>
-              <TableCell>Delete</TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>{TableItems}</TableBody>
-        </Table>
-      ) : (
-        <Body>Loading...</Body>
-      )}
+
+      <Table label="Basic table example">
+        <TableHeader>
+          <TableRow>
+            <TableCell>Id</TableCell>
+            <TableCell>Address</TableCell>
+            <TableCell>Save</TableCell>
+            <TableCell>Delete</TableCell>
+          </TableRow>
+        </TableHeader>
+        {!isLoading ? <TableBody>{TableItems}</TableBody> : <Body>Loading...</Body>}
+      </Table>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  await queryClient.prefetchQuery('warehouse', fetchWarehouse);
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 };
 
 export default Warehouse;

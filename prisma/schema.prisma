@@ -24,11 +24,11 @@ model Books {
 
 model User {
   id        Int         @id @default(autoincrement())
-  firstName String      @db.VarChar(15)
-  lastName  String      @db.VarChar(15)
-  userName  String      @db.VarChar(15)
-  password  String      @db.VarChar(15)
-  email     String      @db.VarChar(15)
+  firstName String      @db.VarChar(45)
+  lastName  String      @db.VarChar(45)
+  userName  String      @db.VarChar(45)
+  password  String      @db.VarChar(45)
+  email     String      @db.VarChar(45)
   UserItems UserItems[]
   Orders    Orders[]
 }

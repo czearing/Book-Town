@@ -10,17 +10,16 @@ import {
   Button,
   Input,
   Header3,
-  Stack,
   Divider,
   SearchIcon,
   tokens,
 } from '@cebus/react-components';
 import type { InputProps } from '@cebus/react-components';
-import { dehydrate } from 'react-query/hydration';
 import { useQuery, useMutation } from 'react-query';
+import { AddRecord, Record } from '../components';
 import { fetchBooks, createBook, deleteBook, updateBook } from '../server';
 import { queryClient } from '../clients/react-query';
-import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import type { NextPage } from 'next';
 
 const inputStyles = {
   height: '34px',
@@ -32,7 +31,7 @@ const inputStyles = {
   backgroundColor: tokens.canvasColor,
 };
 
-const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
+const Books: NextPage = () => {
   const [searchValue, setSearchValue] = React.useState('');
   const { data, isLoading } = useQuery(['books', searchValue], fetchBooks);
 
@@ -69,82 +68,6 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
   };
 
   const onSearchValueChange: InputProps['onChange'] = (ev, incomingValue) => setSearchValue(incomingValue.value);
-
-  const AddRecord = () => {
-    const [title, setTitle] = React.useState('');
-    const [author, setAuthor] = React.useState('');
-    const [genre, setGenre] = React.useState('');
-    const [stock, setStock] = React.useState('');
-    const [price, setPrice] = React.useState('');
-
-    const onTitleChange: InputProps['onChange'] = (ev, incomingValue) => setTitle(incomingValue.value);
-    const onAuthorChange: InputProps['onChange'] = (ev, incomingValue) => setAuthor(incomingValue.value);
-    const onGenreChange: InputProps['onChange'] = (ev, incomingValue) => setGenre(incomingValue.value);
-    const onStockChange: InputProps['onChange'] = (ev, incomingValue) => setStock(incomingValue.value);
-    const onPriceChange: InputProps['onChange'] = (ev, incomingValue) => setPrice(incomingValue.value);
-
-    const onPost = () => {
-      const incomingData = {
-        title: title,
-        author: author,
-        genre: genre,
-        stock: parseInt(stock),
-        price: parseInt(price),
-      };
-
-      postItem.mutate(incomingData);
-    };
-
-    return (
-      <Stack verticalAlignment="center">
-        <Input
-          value={title}
-          onChange={onTitleChange}
-          label="Title"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={author}
-          onChange={onAuthorChange}
-          label="Author"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={genre}
-          onChange={onGenreChange}
-          label="Genre"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={stock}
-          onChange={onStockChange}
-          label="Stock"
-          size="small"
-          type="number"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={price}
-          onChange={onPriceChange}
-          label="Price"
-          type="number"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Button appearance="primary" onClick={onPost}>
-          Add record
-        </Button>
-      </Stack>
-    );
-  };
 
   const DataRow = (props: any) => {
     const { id, author, genre, price, stock, title } = props;
@@ -211,6 +134,14 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
       return <DataRow {...item} />;
     });
 
+  const records: Record[] = [
+    { name: 'Title', id: 'title', type: 'text' },
+    { name: 'Author', id: 'author', type: 'text' },
+    { name: 'Genre', id: 'genre', type: 'text' },
+    { name: 'Price', id: 'price', type: 'number' },
+    { name: 'Stock', id: 'stock', type: 'number' },
+  ];
+
   return (
     <>
       <Header1>Books</Header1>
@@ -226,43 +157,25 @@ const Books: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
         disabled
       />
       <Divider />
-      <Header3>Add a Record</Header3>
-      <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
-      <AddRecord />
+      <AddRecord records={records} postItem={postItem} isError={isError} />
       <Divider />
       <Header3>Table</Header3>
       <Body>To edit a cell, update its input field and then press save.</Body>
-      {!isLoading ? (
-        <Table label="Basic table example">
-          <TableHeader>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Author</TableCell>
-              <TableCell>Genre</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Stock</TableCell>
-              <TableCell>Save</TableCell>
-              <TableCell>Delete</TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>{TableItems}</TableBody>
-        </Table>
-      ) : (
-        <Body>Loading...</Body>
-      )}
+      <Table label="Basic table example">
+        <TableHeader>
+          <TableRow>
+            <TableCell>Id</TableCell>
+            {records.map(record => (
+              <TableCell>{record.name}</TableCell>
+            ))}
+            <TableCell>Save</TableCell>
+            <TableCell>Delete</TableCell>
+          </TableRow>
+        </TableHeader>
+        {!isLoading ? <TableBody>{TableItems}</TableBody> : <Body>Loading...</Body>}
+      </Table>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  await queryClient.prefetchQuery('books', fetchBooks);
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 };
 
 export default Books;

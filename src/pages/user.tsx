@@ -8,18 +8,16 @@ import {
   TableBody,
   Body,
   Button,
-  Input,
   Header3,
-  Stack,
   Divider,
   tokens,
 } from '@cebus/react-components';
-import type { InputProps } from '@cebus/react-components';
-import { dehydrate } from 'react-query/hydration';
+import { AddRecord } from '../components';
+import type { Record } from '../components';
 import { useQuery, useMutation } from 'react-query';
 import { createUser, deleteUser, fetchUser, updateUser } from '../server';
 import { queryClient } from '../clients/react-query';
-import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import type { NextPage } from 'next';
 
 const inputStyles = {
   height: '34px',
@@ -31,7 +29,7 @@ const inputStyles = {
   backgroundColor: tokens.canvasColor,
 };
 
-const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
+const User: NextPage = ({}) => {
   const { data, isLoading } = useQuery('user', fetchUser);
 
   const [isError, setIsError] = React.useState(false);
@@ -64,80 +62,6 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
 
   const onDelete = (itemToRemove: number) => {
     deleteItem.mutate({ id: itemToRemove });
-  };
-
-  const AddRecord = () => {
-    const [firstName, setFirstName] = React.useState('');
-    const [lastName, setLastName] = React.useState('');
-    const [userName, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
-    const [email, setEmail] = React.useState('');
-
-    const onFirstNameChange: InputProps['onChange'] = (ev, incomingValue) => setFirstName(incomingValue.value);
-    const onLastNameChange: InputProps['onChange'] = (ev, incomingValue) => setLastName(incomingValue.value);
-    const onUserNameChange: InputProps['onChange'] = (ev, incomingValue) => setUsername(incomingValue.value);
-    const onPasswordChange: InputProps['onChange'] = (ev, incomingValue) => setPassword(incomingValue.value);
-    const onEmailChange: InputProps['onChange'] = (ev, incomingValue) => setEmail(incomingValue.value);
-
-    const onPost = () => {
-      const incomingData = {
-        firstName: firstName,
-        lastName: lastName,
-        userName: userName,
-        password: password,
-        email: email,
-      };
-
-      postItem.mutate(incomingData);
-    };
-
-    return (
-      <Stack verticalAlignment="center">
-        <Input
-          value={firstName}
-          onChange={onFirstNameChange}
-          label="First name"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={lastName}
-          onChange={onLastNameChange}
-          label="Last name"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={userName}
-          onChange={onUserNameChange}
-          label="Username"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={password}
-          onChange={onPasswordChange}
-          label="Password"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Input
-          value={email}
-          onChange={onEmailChange}
-          label="Email"
-          size="small"
-          style={{ maxWidth: '150px' }}
-          danger={isError}
-        />
-        <Button appearance="primary" onClick={onPost}>
-          Add record
-        </Button>
-      </Stack>
-    );
   };
 
   const DataRow = (props: any) => {
@@ -201,47 +125,37 @@ const User: InferGetServerSidePropsType<typeof getServerSideProps> = ({}) => {
     return <DataRow {...item} />;
   });
 
+  const records: Record[] = [
+    { name: 'First name', id: 'firstName', type: 'text' },
+    { name: 'Last name', id: 'lastName', type: 'text' },
+    { name: 'User name', id: 'userName', type: 'text' },
+    { name: 'Password', id: 'password', type: 'text' },
+    { name: 'Email', id: 'email', type: 'text' },
+  ];
+
   return (
     <>
       <Header1>User</Header1>
       <Divider />
-      <Header3>Add a Record</Header3>
-      <Body>To add a record fill out the rows below. To edit a cell, update its input field and then press save.</Body>
-      <AddRecord />
+      <AddRecord records={records} postItem={postItem} isError={isError} />
       <Divider />
       <Header3>Table</Header3>
       <Body>To edit a cell, update its input field and then press save.</Body>
-      {!isLoading ? (
-        <Table label="Basic table example">
-          <TableHeader>
-            <TableRow>
-              <TableCell>Id</TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell>Author</TableCell>
-              <TableCell>Genre</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Stock</TableCell>
-              <TableCell>Save</TableCell>
-              <TableCell>Delete</TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>{TableItems}</TableBody>
-        </Table>
-      ) : (
-        <Body>Loading...</Body>
-      )}
+      <Table label="Basic table example">
+        <TableHeader>
+          <TableRow>
+            <TableCell>Id</TableCell>
+            {records.map(record => (
+              <TableCell>{record.name}</TableCell>
+            ))}
+            <TableCell>Save</TableCell>
+            <TableCell>Delete</TableCell>
+          </TableRow>
+        </TableHeader>
+        {!isLoading ? <TableBody>{TableItems}</TableBody> : <Body>Loading...</Body>}
+      </Table>
     </>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  // await queryClient.prefetchQuery('user', fetchUser);
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 };
 
 export default User;
