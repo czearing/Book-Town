@@ -42,7 +42,6 @@ export const AddRecord = (props: AddRecordProps) => {
 
   const onSubmit = (ev: any) => {
     ev.preventDefault();
-    console.log(ev.target[0].value);
 
     const data: any = {};
     for (let i = 0; i < ev.target.length; i++) {
