@@ -51,7 +51,7 @@ export const AddRecord = (props: AddRecordProps) => {
             data[ev.target[i].id] = parseInt(ev.target[i].value);
             break;
           case 'date':
-            data[ev.target[i].id] = new Date(ev.target[i].value);
+            data[ev.target[i].id] = ev.target[i].value;
             break;
           default:
             data[ev.target[i].id] = ev.target[i].value;

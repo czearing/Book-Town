@@ -35,8 +35,8 @@ const Orders: NextPage = ({}) => {
   });
 
   const records: Record[] = [
-    { name: 'ID User', id: 'idUser', type: 'number' },
-    { name: 'ID Book', id: 'idBook', type: 'number' },
+    { name: 'Id User', id: 'idUser', type: 'number' },
+    { name: 'Id Book', id: 'idBook', type: 'number' },
     { name: 'Order date', id: 'orderDate', type: 'text' },
   ];
 

@@ -10,8 +10,7 @@ import type { NextPage } from 'next';
 
 const Books: NextPage = () => {
   const [searchValue, setSearchValue] = React.useState('');
-  const { data, isLoading } = useQuery(['books', searchValue], fetchBooks);
-
+  const { data, isLoading } = useQuery('books', fetchBooks);
   const [isError, setIsError] = React.useState(false);
 
   const postItem = useMutation(createBook, {
@@ -46,6 +45,8 @@ const Books: NextPage = () => {
     { name: 'Stock', id: 'stock', type: 'number' },
   ];
 
+  const filteredData = data?.filter((item: any) => item?.title?.toLowerCase()?.includes(searchValue.toLowerCase()));
+
   return (
     <>
       <Header1>Books</Header1>
@@ -57,13 +58,19 @@ const Books: NextPage = () => {
         onChange={onSearchValueChange}
         contentAfter={<SearchIcon />}
         placeholder="Enter your search value"
-        label="Search (Work in progress)"
-        disabled
+        label="Search"
+        size="small"
       />
       <Divider />
       <AddRecord records={records} postItem={postItem} isError={isError} />
       <Divider />
-      <DataTable records={records} data={data} isLoading={isLoading} updateItem={updateItem} deleteItem={deleteItem} />
+      <DataTable
+        records={records}
+        data={filteredData}
+        isLoading={isLoading}
+        updateItem={updateItem}
+        deleteItem={deleteItem}
+      />
     </>
   );
 };
