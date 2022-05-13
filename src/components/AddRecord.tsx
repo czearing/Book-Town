@@ -15,7 +15,7 @@ export type Record = {
   /**
    * The supported type for the record.
    */
-  type: 'text' | 'number';
+  type: 'text' | 'number' | 'date';
 };
 
 type AddRecordProps = {
@@ -46,11 +46,20 @@ export const AddRecord = (props: AddRecordProps) => {
     const data: any = {};
     for (let i = 0; i < ev.target.length; i++) {
       if (ev.target[i].tagName !== 'BUTTON') {
-        data[ev.target[i].id] = records[i].type === 'number' ? parseInt(ev.target[i].value) : ev.target[i].value;
+        switch (records[i].type) {
+          case 'number':
+            data[ev.target[i].id] = parseInt(ev.target[i].value);
+            break;
+          case 'date':
+            data[ev.target[i].id] = new Date(ev.target[i].value);
+            break;
+          default:
+            data[ev.target[i].id] = ev.target[i].value;
+            break;
+        }
       }
     }
 
-    console.log(data);
     postItem.mutate(data);
   };
 
@@ -63,7 +72,8 @@ export const AddRecord = (props: AddRecordProps) => {
           {records.map(record => (
             <Input
               id={record.id}
-              label={record.name}
+              label={record.type !== 'date' ? record.name : ''}
+              placeholder={record.type === 'date' ? record.name : ''}
               size="small"
               style={inputStyles}
               type={record.type}

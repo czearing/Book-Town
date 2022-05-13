@@ -1,5 +1,5 @@
-export const createOrder = async (body: any) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order`, {
+export const createOrders = async (body: any) => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
     method: 'POST',
     body: JSON.stringify(body),
   });

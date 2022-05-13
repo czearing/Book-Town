@@ -46,15 +46,14 @@ export const DataRow = (props: DataRowProps) => {
 
     const updatedData: any = {};
     for (const key in rowData) {
-      // if (key !== 'id') {
-      // TODO: This is an evil exponential function. Change it so it does a constant look up.
-      for (let i = 0; i < records.length; i++) {
-        if (records[i].id === key) {
-          if (records[i].type === 'number') {
+      if (key !== 'id') {
+        switch (records.find(x => x.id === key)?.type) {
+          case 'number':
             updatedData[key] = parseInt(rowData[key]);
-          } else {
+            break;
+          default:
             updatedData[key] = rowData[key];
-          }
+            break;
         }
       }
     }
@@ -72,7 +71,13 @@ export const DataRow = (props: DataRowProps) => {
         key =>
           key !== 'id' && (
             <TableCell>
-              <input value={rowData[key]} name={key} onChange={onRowDataChange} style={inputStyles} />
+              <input
+                value={rowData[key]}
+                type={records.find(x => x.id === key)?.type}
+                name={key}
+                onChange={onRowDataChange}
+                style={inputStyles}
+              />
             </TableCell>
           ),
       )}
