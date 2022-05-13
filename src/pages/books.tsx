@@ -10,7 +10,7 @@ import type { NextPage } from 'next';
 
 const Books: NextPage = () => {
   const [searchValue, setSearchValue] = React.useState('');
-  const { data, isLoading } = useQuery('books', fetchBooks);
+  const { data, isLoading } = useQuery(['books', searchValue], fetchBooks);
   const [isError, setIsError] = React.useState(false);
 
   const postItem = useMutation(createBook, {
